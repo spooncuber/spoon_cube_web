@@ -1,6 +1,9 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+
+
+
 # Input two codes and state and output the state with exchanging of the two codes
 def ex_code(input_code, input_state):
 
@@ -87,3 +90,4 @@ input_state = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L',
 
 print(ex_code(input_code, input_state))
 """
+
