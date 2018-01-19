@@ -40,7 +40,7 @@ def user_email(name):
     return "%s's current age: %d; after %d years: %d" %(name, age, years, age_later)
 
 @app.route('/user_alg/<name>/<range>')
-def user_alg(name, counts):
+def user_alg(name, range):
     # first get the tiny db instance
     db = get_db()
     # then query the specified user's information
