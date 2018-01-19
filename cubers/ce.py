@@ -1,7 +1,8 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-import urllib.request
+from urllib2 import *
+import urllib2
 
 # this function input ce_code to CE and calculate moves of this state
 
@@ -10,7 +11,7 @@ def conn2ce(url_input):
     url_head = 'http://127.0.0.1:8081/?'
     url_all = ''.join([url_head, ''.join(url_input)])
 
-    str = urllib.request.urlopen(url_all).read()
+    str = urllib2.urlopen(url_all).read()
     moves = str[14:-18]
 
     return moves
@@ -38,12 +39,12 @@ def chichu2ce(input_state):
     # output is cube's code in CE with CE's order
     return(ce_code)
 
-"""
-input_state = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L',
-               'W', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'X', 'Y', 'Z',
-               'y', 'z', 'c', 'd', 'e', 'f', 'n', 'm', 'i', 'j', 'k', 'l',
-               'b', 'a', 'o', 'p', 'g', 'h', 's', 't', 'w', 'x', 'q', 'r',
-               '1', '2', '3', '4', '5', '6']
+if __name__ == '__main__':
 
-print(conn2ce(chichu2ce(input_state)))
-"""
+    input_state = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L',
+                   'W', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'X', 'Y', 'Z',
+                   'y', 'z', 'c', 'd', 'e', 'f', 'n', 'm', 'i', 'j', 'k', 'l',
+                   'b', 'a', 'o', 'p', 'g', 'h', 's', 't', 'w', 'x', 'q', 'r',
+                   '1', '2', '3', '4', '5', '6']
+
+    print(conn2ce(chichu2ce(input_state)))
