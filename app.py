@@ -2,7 +2,7 @@ import sys
 sys.path.append('./lib')
 sys.path.append('./cubers')
 
-from flask import Flask, request, g, render_template
+from flask import Flask, request, g, render_template, jsonify
 app = Flask(__name__)
 
 # import tiny db
@@ -23,46 +23,58 @@ def get_db():
         g.tiny_db = TinyDb("./data/")
     return g.tiny_db
 
-@app.route('/register', methods=['POST'])
+@app.route('/api/register', methods=['POST'])
 def register():
     try:
         username = request.form['username']
         password = request.form['password']
         email = request.form['email']
-        c_buffer = request.form['cBuffer']
-        e_buffer = request.form['eBuffer']
-        up_face = request.form['upFace']
-        front_face = request.form['frontFace']
-        right_face = request.form['rightFace']
+        c_buffer = request.form['c_buffer']
+        e_buffer = request.form['e_buffer']
+        up_face = request.form['up_face']
+        front_face = request.form['front_face']
+        right_face = request.form['right_face']
     except Exception as e:
-        # TODO
         print(e)
+        return jsonify({'success': False})
     db = get_db()
     if not db.has_table('user'):
-        db.add_table('user', ['username', 'password', 'email', 'cBuffer', 'eBuffer', 'upFace', 'frontFace', 'rightFace'])
+        db.add_table('user', ['username', 'password', 'email', 'c_buffer', 'e_buffer', 'up_face', 'front_face', 'right_face'])
     db.insert_record('user', {'username': username, 'password': email, 
-                              'cBuffer': c_buffer, 'eBuffer': e_buffer, 
-                              'upFace': up_face, 'frontFace': front_face, 
-                              'rightFace': right_face})
+                              'c_buffer': c_buffer, 'e_buffer': e_buffer, 
+                              'up_face': up_face, 'front_face': front_face, 
+                              'right_face': right_face})
+    return jsonify({'success': True})
 
-@app.route('/all_algs', methods=['POST'])
+@app.route('/api/all_algs', methods=['POST'])
 def get_all_algs():
-    train_type = request.form['tranType']
+    if hasattr(g, "all_algs"):
+        return g.all_algs
+    train_type = request.form['train_type']
+    username = request.form['username']
     db = get_db()
-    result = db.find('user', request.form['username'])
+    result = db.find('user', username)
     buffer = result[train_type]
     all_algs = alg_set_generator(buffer)
-    return all_algs
+    g.all_algs = all_algs
+    return jsonify({'all_algs': all_algs})
 
-@app.route('/set_train_algs')
+@app.route('/set_train_algs', methods=['POST'])
 def set_train_algs():
     train_algs = request.form['train_algs']
-    if not db.has_table('trainAlg'):
-        # TODO:
-        # db.add_table()
-        pass
-    db.insert_record()
+    username = request.form['username']
+    db = get_db()
+    if not db.has_table('train_alg'):
+        db.add_table('train_alg', ['no', 'alg', 'username', 'train_times'])
+    for i, alg in enumerate(train_algs):
+        db.insert_record('train_alg', {'no': i, 'alg': alg, 'username': username, 'train_times': 0})
+    return jsonify({'success': True})
 
+@app.route('/get_train_algs')
+def get_train_algs():
+    username = request.form['username']
+    db = get_db()
+    results = db.find_by('train_alg', 'username', username)
 
 @app.route('/user_age/<name>')
 def user_email(name):

@@ -74,6 +74,18 @@ class TinyDb(object):
                 return []
             else:
                 return table[primary_value]
+
+    def find_by(self, table_name, target, value):
+        if table_name not in self.tables:
+            print("table [%s] not exist" %table_name)
+            return []
+        table = self.tables[table_name]
+        result = []
+        for primary_key in table:
+            record = table[primary_key]
+            if record[target] == value:
+                result.append(record)
+        return result
     
     def find_all(self, table_name):
         return self.find(table_name)
