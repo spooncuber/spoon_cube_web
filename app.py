@@ -2,7 +2,7 @@ import sys
 sys.path.append('./lib')
 sys.path.append('./cubers')
 
-from flask import Flask, request, g
+from flask import Flask, request, g, render_template
 app = Flask(__name__)
 
 # import tiny db
@@ -22,6 +22,47 @@ def get_db():
     if not hasattr(g, "tiny_db"):
         g.tiny_db = TinyDb("./data/")
     return g.tiny_db
+
+@app.route('/register', methods=['POST'])
+def register():
+    try:
+        username = request.form['username']
+        password = request.form['password']
+        email = request.form['email']
+        c_buffer = request.form['cBuffer']
+        e_buffer = request.form['eBuffer']
+        up_face = request.form['upFace']
+        front_face = request.form['frontFace']
+        right_face = request.form['rightFace']
+    except Exception as e:
+        # TODO
+        print(e)
+    db = get_db()
+    if not db.has_table('user'):
+        db.add_table('user', ['username', 'password', 'email', 'cBuffer', 'eBuffer', 'upFace', 'frontFace', 'rightFace'])
+    db.insert_record('user', {'username': username, 'password': email, 
+                              'cBuffer': c_buffer, 'eBuffer': e_buffer, 
+                              'upFace': up_face, 'frontFace': front_face, 
+                              'rightFace': right_face})
+
+@app.route('/all_algs', methods=['POST'])
+def get_all_algs():
+    train_type = request.form['tranType']
+    db = get_db()
+    result = db.find('user', request.form['username'])
+    buffer = result[train_type]
+    all_algs = alg_set_generator(buffer)
+    return all_algs
+
+@app.route('/set_train_algs')
+def set_train_algs():
+    train_algs = request.form['train_algs']
+    if not db.has_table('trainAlg'):
+        # TODO:
+        # db.add_table()
+        pass
+    db.insert_record()
+
 
 @app.route('/user_age/<name>')
 def user_email(name):

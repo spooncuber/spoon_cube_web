@@ -83,6 +83,9 @@ class TinyDb(object):
             return ''
         else:
             return self.table_info[table_name]
+
+    def has_table(self, table_name):
+        return table_name in self.table_info
     
     def __load_db(self):
         table_info_file = self.dest + "table_info.db"
