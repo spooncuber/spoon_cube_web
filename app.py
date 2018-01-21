@@ -48,21 +48,20 @@ def register():
 
 @app.route('/api/all_algs', methods=['POST'])
 def get_all_algs():
-    if hasattr(g, "all_algs"):
-        return g.all_algs
     train_type = request.form['train_type']
     username = request.form['username']
     db = get_db()
     result = db.find('user', username)
     buffer = result[train_type]
     all_algs = alg_set_generator(buffer)
-    g.all_algs = all_algs
     return jsonify({'all_algs': all_algs})
 
-@app.route('/set_train_algs', methods=['POST'])
+@app.route('/api/set_train_algs', methods=['POST'])
 def set_train_algs():
-    train_algs = request.form['train_algs']
+    # train_algs = request.form['train_algs']
     username = request.form['username']
+
+    train_algs = ['ce', 'th', 'qz', 'wo', 'jl']
     db = get_db()
     if not db.has_table('train_alg'):
         db.add_table('train_alg', ['no', 'alg', 'username', 'train_times'])
@@ -70,11 +69,34 @@ def set_train_algs():
         db.insert_record('train_alg', {'no': i, 'alg': alg, 'username': username, 'train_times': 0})
     return jsonify({'success': True})
 
-@app.route('/get_train_algs')
+@app.route('/get_train_algs', methods=['POST'])
 def get_train_algs():
     username = request.form['username']
+    train_type = request.form['train_type']
     db = get_db()
     results = db.find_by('train_alg', 'username', username)
+
+    train_algs = [x['alg'] for x in results]
+    train_times = {}
+    for x in results:
+        print(x['alg'], x['train_times'])
+        train_times[x['alg']] = int(x['train_times'])
+
+    result = db.find('user', username)
+    buffer = result[train_type]
+    all_algs = alg_set_generator(buffer)
+
+    # cube's init_state
+    init_state = 'ABCDEFGHIJKLWMNOPQRSTXYZabcdefghijklmnopqrstwxyz123456'
+    init_state = list(init_state)
+    # get a input_code for CE to calculate scrambler, and get the training times for every training alg
+    input_code, train_times = random_codes(buffer, all_algs, train_algs, train_times)
+    # transform input_code to the cube's state in chichu
+    output_state = code_trans(input_code, init_state)
+    # transform chichu state to CE state, and push it to CE to get scrambler
+    scrambler = conn2ce(chichu2ce(output_state))
+
+    return jsonify({'daluangongshi': scrambler})
 
 @app.route('/user_age/<name>')
 def user_email(name):
