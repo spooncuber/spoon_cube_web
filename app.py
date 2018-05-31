@@ -2,11 +2,11 @@ import sys
 sys.path.append('./lib')
 sys.path.append('./cubers')
 
-from flask_cors import *
+# from flask_cors import *
 from flask import Flask, request, g, render_template, jsonify
 app = Flask(__name__)
-CORS(app, supports_credentials=True)
-CORS(app, resources=r'/*')
+# CORS(app, supports_credentials=True)
+# CORS(app, resources=r'/*')
 
 # import tiny db
 from tiny_db import TinyDb
@@ -25,6 +25,14 @@ def get_db():
     if not hasattr(g, "tiny_db"):
         g.tiny_db = TinyDb("./data/")
     return g.tiny_db
+
+@app.route('/sign_up')
+def sign_up():
+    try:
+        with open('./static/view/index.html', 'r') as f:
+            return f.read()
+    except Exception as e:
+        print(e)
 
 @app.route('/api/register', methods=['POST'])
 def register():
