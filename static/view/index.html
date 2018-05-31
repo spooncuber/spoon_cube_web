@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <script src="https://cdn.jsdelivr.net/npm/vue"></script>
+  <script src="http://ajax.aspnetcdn.com/ajax/jQuery/jquery-1.8.0.js"></script>
+</head>
+<body>
+
+<div id="app">
+    <h2>sign up page</h2>
+    <div class="input">
+        <input v-model="user_name" placeholder="name"/>
+    </div>
+    <div class="input">
+        <input v-model="password" placeholder="password"/>
+    </div>
+    <div class="input">
+        <input v-model="email" placeholder="email"/>
+    </div>
+    <div class="input">
+        <input v-model="c_buffer" placeholder="c_buffer"/>
+    </div>
+    <div class="input">
+        <input v-model="e_buffer" placeholder="e_buffer"/>
+    </div>
+    <div class="input">
+        <input v-model="up_face" placeholder="up_face"/>
+    </div>
+    <div class="input">
+        <input v-model="front_face" placeholder="front_face"/>
+    </div>
+    <div class="input">
+        <input v-model="right_face" placeholder="right_face"/>
+    </div>
+    <button v-on:click="sign_up">sign up</button>
+</div>
+
+</body>
+
+<script>
+
+$(function(){
+
+var server_url = "localhost:5000/api/register";
+
+var vue = new Vue({
+    el: "#app",
+    data: {
+        user_name: null,
+        password: null,
+        email: null,
+        c_buffer: null,
+        e_buffer: null,
+        up_face: null,
+        front_face: null,
+        right_face: null
+    },
+    methods: {
+        sign_up: function(){
+            console.log("commit");
+            $.ajax({
+                type: 'post',
+                url: server_url,
+                data: {
+                    username: this.user_name,
+                    password: this.password,
+                    email: this.email,
+                    c_buffer: this.c_buffer,
+                    e_buffer: this.e_buffer,
+                    up_face: this.up_face,
+                    front_face: this.front_face,
+                    right_face: this.right_face
+                },
+                async: true,
+                success: function (data) {
+                    console.log(data);
+                    alert("done sign up");
+                },
+                dataType: "json"
+            });//ajax
+        }
+    }
+});
+
+});
+
+
+</script>

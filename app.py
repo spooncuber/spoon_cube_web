@@ -2,8 +2,11 @@ import sys
 sys.path.append('./lib')
 sys.path.append('./cubers')
 
+from flask_cors import *
 from flask import Flask, request, g, render_template, jsonify
 app = Flask(__name__)
+CORS(app, supports_credentials=True)
+CORS(app, resources=r'/*')
 
 # import tiny db
 from tiny_db import TinyDb
